@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>卓球スコアボード</title>
+    <title>卓球部内戦スコアボード</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -180,8 +180,12 @@
     .add-game-btn:hover { background: #eff6ff; }
     .add-game-btn.visible { display: block; }
 
-    /* win/lose row highlight */
-    .row-won td { background: #f0fdf4 !important; }
+    /* 勝ちセルのみハイライト */
+    .cell-won { background: #f0fdf4; }
+
+    /* スコアエラー */
+    .game-row.error-row input { border-color: #e03535 !important; background: #fff1f2 !important; color: #e03535 !important; }
+    .score-error-msg { font-size: 9px; color: #e03535; font-weight: 700; text-align: center; margin-top: 1px; }
 
     /* ===== RANKING ===== */
     #ranking-view { padding: 16px; }
@@ -272,7 +276,7 @@
 
 <div id="rule-modal" class="modal-bg" onclick="closeModal()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3>🏓 ルール</h3>
+        <h3>🏓 大会ルール</h3>
         <p>
             ・<strong>3ゲーム先取</strong>で勝利<br>
             ・勝利：<strong>2点</strong>　負け：<strong>1点</strong>　棄権：0点<br><br>
@@ -435,13 +439,7 @@
         html += '</tr></thead><tbody>';
 
         for (let i = 0; i < playerCount; i++) {
-            const res_row = []; // 各対戦結果
-            for (let j = 0; j < playerCount; j++) {
-                if (i !== j) res_row.push(calculateMatch(scores[i][j].games));
-            }
-            const rowWon = res_row.some(r => r.g1 >= WIN_GAMES);
-
-            html += `<tr${rowWon ? ' class="row-won"' : ''}>`;
+            html += `<tr>`;
             html += `<td style="font-weight:700;font-size:11px">${escHtml(players[i])}</td>`;
             for (let j = 0; j < playerCount; j++) {
                 if (i === j) {
@@ -466,13 +464,16 @@
                 const g2Class = res.g2 > res.g1 ? 'gs-lead' : (res.g2 < res.g1 ? 'gs-lose' : 'gs-win');
 
                 let gameRowsHtml = '';
+                let hasError = false;
                 for (let k = 0; k < BEST_OF; k++) {
                     const g = data.games[k];
                     const hidden = k >= vis ? 'hidden-row' : '';
                     const p1Win = g.p1 !== "" && g.p2 !== "" && +g.p1 > +g.p2;
                     const p2Win = g.p1 !== "" && g.p2 !== "" && +g.p2 > +g.p1;
+                    const invalid = !isValidGameScore(g.p1, g.p2);
+                    if (invalid) hasError = true;
                     gameRowsHtml += `
-                        <div class="game-row ${hidden}">
+                        <div class="game-row ${hidden}${invalid ? ' error-row' : ''}">
                             <span class="game-label">G${k+1}</span>
                             <input type="number" inputmode="numeric" min="0" value="${g.p1}"
                                 class="${p1Win ? 'winner' : (p2Win ? 'loser' : '')}"
@@ -481,13 +482,16 @@
                             <input type="number" inputmode="numeric" min="0" value="${g.p2}"
                                 class="${p2Win ? 'winner' : (p1Win ? 'loser' : '')}"
                                 onchange="updateScore(${i},${j},${k},'p2',this.value)">
+                            ${invalid ? '<span style="font-size:10px;color:#e03535">⚠</span>' : ''}
                         </div>`;
                 }
+                const errorMsg = hasError ? `<div class="score-error-msg">⚠ 2点差必要</div>` : '';
 
                 const canAdd = !matchDone && vis < BEST_OF;
                 const addBtn = `<button class="add-game-btn${canAdd ? ' visible' : ''}" onclick="addGame(${i},${j})">＋ゲーム追加</button>`;
+                const cellClass = (matchDone && res.g1 >= WIN_GAMES) ? ' class="cell-won"' : '';
 
-                html += `<td>
+                html += `<td${cellClass}>
                     <div class="match-cell">
                         <div style="display:flex;align-items:center;justify-content:space-between;padding:0 2px">
                             <span class="status-badge ${badgeClass}">${badgeLabel}</span>
@@ -498,6 +502,7 @@
                             </div>
                         </div>
                         <div class="game-rows">${gameRowsHtml}</div>
+                        ${errorMsg}
                         ${addBtn}
                     </div>
                 </td>`;
@@ -509,7 +514,20 @@
         updateProgress();
     }
 
-    // ====== ゲーム手動追加 ======
+    // ====== 卓球スコアバリデーション ======
+    // 有効なゲームスコアの条件：
+    //   通常決着: 11-0〜11-9（11点取得、差2以上）
+    //   デュース:  12-10, 13-11, 14-12 … (両者10以上、差ちょうど2)
+    function isValidGameScore(p1, p2) {
+        if (p1 === "" || p2 === "") return true; // 未入力はエラーなし
+        const a = +p1, b = +p2;
+        const mx = Math.max(a, b), mn = Math.min(a, b);
+        if (mx < 11) return true;           // まだ決着なし→エラーなし
+        if (Math.abs(a - b) < 2) return false; // 2点差未満
+        if (mn < 10 && mx !== 11) return false; // 通常決着なのに11超（12-8等）
+        if (mn >= 10 && Math.abs(a - b) !== 2) return false; // デュースは差ちょうど2
+        return true;
+    }
     function addGame(i, j) {
         if (visibleGames[i][j] < BEST_OF) {
             visibleGames[i][j]++;
