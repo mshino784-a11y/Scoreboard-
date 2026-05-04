@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>卓球部内戦スコアボード</title>
+    <title>卓球スコアボード</title>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -276,7 +276,7 @@
 
 <div id="rule-modal" class="modal-bg" onclick="closeModal()">
     <div class="modal-box" onclick="event.stopPropagation()">
-        <h3>🏓 大会ルール</h3>
+        <h3>🏓 ルール</h3>
         <p>
             ・<strong>3ゲーム先取</strong>で勝利<br>
             ・勝利：<strong>2点</strong>　負け：<strong>1点</strong>　棄権：0点<br><br>
@@ -563,11 +563,25 @@
             if (b.gDiff !== a.gDiff) return b.gDiff - a.gDiff;
             return b.pDiff - a.pDiff;
         });
+        // 同率順位を計算（同じ勝ち点・G差・P差なら同じ順位）
+        let rankNum = 1;
+        stats.forEach((s, idx) => {
+            if (idx === 0) { s.rank = 1; }
+            else {
+                const prev = stats[idx - 1];
+                if (s.winPoints === prev.winPoints && s.gDiff === prev.gDiff && s.pDiff === prev.pDiff) {
+                    s.rank = prev.rank;
+                } else {
+                    s.rank = idx + 1;
+                }
+            }
+        });
+
         document.getElementById('ranking-body').innerHTML = stats.map((s, idx) => {
             const gd = s.gDiff > 0 ? `<span class="positive">+${s.gDiff}</span>` : (s.gDiff < 0 ? `<span class="negative">${s.gDiff}</span>` : s.gDiff);
             const pd = s.pDiff > 0 ? `<span class="positive">+${s.pDiff}</span>` : (s.pDiff < 0 ? `<span class="negative">${s.pDiff}</span>` : s.pDiff);
-            return `<tr class="${idx === 0 ? 'rank-1' : ''}">
-                <td><span class="rank-num">${idx + 1}</span></td>
+            return `<tr class="${s.rank === 1 ? 'rank-1' : ''}">
+                <td><span class="rank-num">${s.rank}</span></td>
                 <td class="rank-name">${escHtml(s.name)}</td>
                 <td><strong>${s.winPoints}</strong></td>
                 <td>${gd}</td>
