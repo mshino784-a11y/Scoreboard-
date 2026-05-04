@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>卓球部内戦スコアボード</title>
+    <style>
+        :root {
+            --primary: #007bff;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --bg: #f4f7f9;
+            --cell-w: 130px;
+            --cell-h: 150px;
+            --header-w: 80px;
+            --font-score: 22px;
+            --input-w: 35px;
+        }
+
+        @media screen and (max-width: 1024px) {
+            :root {
+                --cell-w: 110px; --cell-h: 130px; --header-w: 70px; --font-score: 18px; --input-w: 30px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            :root {
+                --cell-w: 90px; --cell-h: 120px; --header-w: 60px; --font-score: 16px; --input-w: 28px;
+            }
+            button { padding: 10px 12px !important; font-size: 11px !important; }
+            .name-box input { width: 65px !important; font-size: 12px !important; }
+        }
+
+        body { font-family: sans-serif; background-color: var(--bg); margin: 0; padding: 10px; overflow-x: hidden; }
+        .container { max-width: 100%; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .header-controls { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .btn-left { display: flex; flex-direction: column; gap: 8px; }
+        .btn-right { display: flex; gap: 10px; }
+        .btn-group-row { display: flex; gap: 5px; }
+
+        button { padding: 12px 20px; cursor: pointer; border: none; border-radius: 8px; font-weight: bold; color: white; font-size: 14px; }
+        .btn-toggle { background: var(--success); box-shadow: 0 3px #1e7e34; }
+        .btn-rule { background: #6c757d; }
+        .btn-reset { background: var(--danger); box-shadow: 0 3px #a71d2a; }
+        .btn-adjust { background: var(--warning); color: #333; font-size: 20px; padding: 5px 20px; box-shadow: 0 3px #d39e00; }
+
+        .member-setup { background: #eef2f7; padding: 10px; border-radius: 8px; margin-bottom: 15px; }
+        .name-list { display: flex; flex-wrap: wrap; gap: 5px; }
+        .name-box { display: flex; align-items: center; background: white; padding: 3px 8px; border-radius: 6px; border: 1px solid #ddd; }
+        .name-box span { font-size: 10px; color: #888; margin-right: 4px; }
+        .name-box input { border: none; width: 80px; font-weight: bold; font-size: 13px; outline: none; }
+
+        .scroll-container { 
+            overflow: auto; -webkit-overflow-scrolling: touch; border: 1px solid #ccc; border-radius: 8px; background: white; max-height: 70vh; 
+        }
+        
+        #league-table { border-collapse: separate; border-spacing: 0; table-layout: fixed; min-width: max-content; }
+        #league-table th, #league-table td { border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; width: var(--cell-w); height: var(--cell-h); text-align: center; padding: 4px; box-sizing: border-box; }
+        #league-table th { position: sticky; top: 0; background: #f8f9fa; z-index: 10; font-size: 12px; }
+        #league-table th:first-child { width: var(--header-w); left: 0; z-index: 11; }
+        #league-table tr:first-child th:first-child { z-index: 12; }
+        
+        .score-row { display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .game-num { font-size: var(--font-score); font-weight: 900; color: var(--primary); min-width: 20px; }
+        .input-stack { display: flex; flex-direction: column; gap: 2px; }
+        .p-pair { display: flex; align-items: center; gap: 2px; }
+        .p-pair input { width: var(--input-w); height: 24px; text-align: center; font-size: 14px; border: 1px solid #bbb; border-radius: 4px; }
+
+        .diagonal { background: linear-gradient(to top right, transparent 49.5%, #ccc 49.5%, #ccc 50.5%, transparent 50.5%); background-color: #eee; }
+        .hidden { display: none; }
+
+        #ranking-table { width: 100%; border-collapse: collapse; }
+        #ranking-table th { background: #343a40; color: white; padding: 10px; font-size: 13px; position: sticky; top: 0; }
+        #ranking-table td { border: 1px solid #ddd; padding: 10px; text-align: center; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-controls">
+        <div class="btn-left">
+            <button class="btn-toggle" onclick="toggleView()">表示切替</button>
+            <div class="btn-group-row">
+                <button class="btn-rule" onclick="showModal()">ルール</button>
+                <button class="btn-reset" onclick="resetAll()">リセット</button>
+            </div>
+        </div>
+        <div class="btn-right">
+            <button class="btn-adjust" onclick="adjustPlayers(1)">＋</button>
+            <button class="btn-adjust" onclick="adjustPlayers(-1)">－</button>
+        </div>
+    </div>
+
+    <div id="setup-area" class="member-setup">
+        <div id="name-list" class="name-list"></div>
+    </div>
+
+    <div id="league-view">
+        <div class="scroll-container">
+            <table id="league-table"></table>
+        </div>
+    </div>
+
+    <div id="ranking-view" class="hidden">
+        <h2 style="margin: 0 0 10px 5px; border-left: 5px solid var(--success); padding-left: 10px; font-size: 18px;">順位表</h2>
+        <div class="scroll-container">
+            <table id="ranking-table">
+                <thead>
+                    <tr><th style="width:40px">位</th><th>名前</th><th>点</th><th>G差</th><th>P差</th></tr>
+                </thead>
+                <tbody id="ranking-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="rule-modal" class="modal" onclick="closeModal()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:1000;">
+    <div class="modal-content" onclick="event.stopPropagation()" style="background:white; padding:20px; border-radius:12px; width:85%; max-width:400px;">
+        <h3>大会ルール</h3>
+        <p style="font-size: 13px; line-height: 1.6;">・3ゲーム先取<br>・勝：2点 / 負：1点 / 棄：0点<br><strong>【順位決定】</strong><br>1. 勝ち点 / 2. 直接対決 / 3. 得失ゲーム差 / 4. 得失ポイント差</p>
+        <button style="background: var(--primary); width: 100%; padding: 12px;" onclick="closeModal()">閉じる</button>
+    </div>
+</div>
+
+<script>
+    let playerCount = 3;
+    let players = ["名前1", "名前2", "名前3"];
+    let scores = {};
+
+    function initScores() {
+        scores = {};
+        for(let i=0; i<15; i++) {
+            scores[i] = {};
+            for(let j=0; j<15; j++) {
+                scores[i][j] = { games: Array.from({length: 5}, () => ({p1: "", p2: ""})) };
+            }
+        }
+    }
+
+    // --- 保存機能 ---
+    function saveData() {
+        const data = { playerCount, players, scores };
+        localStorage.setItem('tt_league_data', JSON.stringify(data));
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('tt_league_data');
+        if (saved) {
+            const data = JSON.parse(saved);
+            playerCount = data.playerCount;
+            players = data.players;
+            scores = data.scores;
+            return true;
+        }
+        return false;
+    }
+
+    function resetAll() {
+        if (confirm("すべてのスコアと名前をリセットしてよろしいですか？")) {
+            localStorage.removeItem('tt_league_data');
+            playerCount = 3;
+            players = ["名前1", "名前2", "名前3"];
+            initScores();
+            renderAll();
+        }
+    }
+
+    function adjustPlayers(n) {
+        if(n > 0 && playerCount < 12) {
+            playerCount++;
+            if(!players[playerCount-1]) players.push(`名前${playerCount}`);
+        } else if(n < 0 && playerCount > 2) {
+            playerCount--;
+        }
+        renderAll();
+        saveData();
+    }
+
+    function updatePlayerName(idx, name) {
+        players[idx] = name;
+        renderLeague();
+        saveData();
+    }
+
+    function updateScore(r, c, gameIdx, field, val) {
+        const v = val === "" ? "" : parseInt(val);
+        scores[r][c].games[gameIdx][field] = v;
+        const otherField = field === 'p1' ? 'p2' : 'p1';
+        scores[c][r].games[gameIdx][otherField] = v;
+        renderLeague();
+        saveData();
+    }
+
+    function calculateMatch(games) {
+        let g1 = 0, g2 = 0, p1T = 0, p2T = 0;
+        games.forEach(g => {
+            if(g.p1 !== "" && g.p2 !== "" && !isNaN(g.p1) && !isNaN(g.p2)) {
+                if(g.p1 > g.p2) g1++; else if(g.p2 > g.p1) g2++;
+                p1T += g.p1; p2T += g.p2;
+            }
+        });
+        return { g1, g2, p1T, p2T };
+    }
+
+    function renderAll() {
+        renderNameSetup();
+        renderLeague();
+    }
+
+    function renderNameSetup() {
+        const list = document.getElementById('name-list');
+        list.innerHTML = players.slice(0, playerCount).map((name, i) => `
+            <div class="name-box"><span>${i+1}</span><input type="text" value="${name}" oninput="updatePlayerName(${i}, this.value)"></div>
+        `).join('');
+    }
+
+    function renderLeague() {
+        const table = document.getElementById('league-table');
+        let html = `<tr><th class="diagonal"></th>`;
+        for(let i=0; i<playerCount; i++) html += `<th>${players[i]}</th>`;
+        html += `</tr>`;
+        for(let i=0; i<playerCount; i++) {
+            html += `<tr><th>${players[i]}</th>`;
+            for(let j=0; j<playerCount; j++) {
+                if(i === j) { html += `<td class="diagonal"></td>`; } 
+                else {
+                    const data = scores[i][j];
+                    const res = calculateMatch(data.games);
+                    let inputs = "";
+                    for(let k=0; k<5; k++) {
+                        inputs += `<div class="p-pair">
+                            <input type="number" inputmode="numeric" value="${data.games[k].p1}" onchange="updateScore(${i},${j},${k},'p1',this.value)">
+                            <span style="color:#ccc">-</span>
+                            <input type="number" inputmode="numeric" value="${data.games[k].p2}" onchange="updateScore(${i},${j},${k},'p2',this.value)">
+                        </div>`;
+                    }
+                    html += `<td><div class="score-row"><div class="game-num">${res.g1}</div><div class="input-stack">${inputs}</div><div class="game-num">${res.g2}</div></div></td>`;
+                }
+            }
+            html += `</tr>`;
+        }
+        table.innerHTML = html;
+    }
+
+    function renderRanking() {
+        let stats = players.slice(0, playerCount).map((name, i) => {
+            let s = { id: i, name: name, winPoints: 0, gDiff: 0, pDiff: 0, defeated: [] };
+            for(let j=0; j<playerCount; j++) {
+                if(i === j) continue;
+                const m = calculateMatch(scores[i][j].games);
+                if(m.g1 > 0 || m.g2 > 0) {
+                    if(m.g1 > m.g2) { s.winPoints += 2; s.defeated.push(j); } else { s.winPoints += 1; }
+                    s.gDiff += (m.g1 - m.g2); s.pDiff += (m.p1T - m.p2T);
+                }
+            }
+            return s;
+        });
+        stats.sort((a, b) => {
+            if (b.winPoints !== a.winPoints) return b.winPoints - a.winPoints;
+            const tied = stats.filter(x => x.winPoints === a.winPoints);
+            if (tied.length === 2) {
+                if (a.defeated.includes(b.id)) return -1;
+                if (b.defeated.includes(a.id)) return 1;
+            }
+            if (b.gDiff !== a.gDiff) return b.gDiff - a.gDiff;
+            return b.pDiff - a.pDiff;
+        });
+        document.getElementById('ranking-body').innerHTML = stats.map((s, idx) => `
+            <tr><td>${idx + 1}</td><td style="text-align:left;font-weight:bold">${s.name}</td><td>${s.winPoints}</td>
+            <td style="color:${s.gDiff < 0 ? 'red' : 'black'}">${s.gDiff > 0 ? '+' + s.gDiff : s.gDiff}</td>
+            <td>${s.pDiff > 0 ? '+' + s.pDiff : s.pDiff}</td></tr>
+        `).join('');
+    }
+
+    function toggleView() {
+        const lv = document.getElementById('league-view');
+        const rv = document.getElementById('ranking-view');
+        const sa = document.getElementById('setup-area');
+        if (lv.classList.contains('hidden')) {
+            lv.classList.remove('hidden'); sa.classList.remove('hidden'); rv.classList.add('hidden');
+        } else {
+            lv.classList.add('hidden'); sa.classList.add('hidden'); rv.classList.remove('hidden');
+            renderRanking();
+        }
+    }
+
+    function showModal() { document.getElementById('rule-modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('rule-modal').style.display = 'none'; }
+
+    // 初期起動処理
+    if (!loadData()) {
+        initScores();
+    }
+    renderAll();
+</script>
+
+</body>
+</html>
