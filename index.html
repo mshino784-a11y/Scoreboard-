@@ -108,7 +108,7 @@
         <div class="scroll-container">
             <table id="ranking-table">
                 <thead>
-                    <tr><th style="width:40px">位</th><th>名前</th><th>点</th><th>G差</th><th>P差</th></tr>
+                    <tr><th style="width:40px">位</th><th>名前</th><th>点</th><th>ゲーム差</th><th>ポイント差</th></tr>
                 </thead>
                 <tbody id="ranking-body"></tbody>
             </table>
@@ -118,7 +118,7 @@
 
 <div id="rule-modal" class="modal" onclick="closeModal()" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:none; justify-content:center; align-items:center; z-index:1000;">
     <div class="modal-content" onclick="event.stopPropagation()" style="background:white; padding:20px; border-radius:12px; width:85%; max-width:400px;">
-        <h3>大会ルール</h3>
+        <h3>ルール</h3>
         <p style="font-size: 13px; line-height: 1.6;">・3ゲーム先取<br>・勝：2点 / 負：1点 / 棄：0点<br><strong>【順位決定】</strong><br>1. 勝ち点 / 2. 直接対決 / 3. 得失ゲーム差 / 4. 得失ポイント差</p>
         <button style="background: var(--primary); width: 100%; padding: 12px;" onclick="closeModal()">閉じる</button>
     </div>
