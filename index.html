@@ -28,218 +28,221 @@
             .top-bar button { padding: 8px 10px !important; font-size: 11px !important; }
         }
 
-```
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Zen Kaku Gothic New', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Zen Kaku Gothic New', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
 
-    /* ===== TOP BAR ===== */
-    .top-bar {
-        background: var(--ink);
-        color: white;
-        padding: 12px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        position: sticky;
-        top: 0;
-        z-index: 100;
-    }
-    .top-bar h1 { font-size: 15px; font-weight: 900; letter-spacing: .05em; flex: 1; white-space: nowrap; }
-    .top-bar button {
-        padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer;
-        font-family: inherit; font-weight: 700; font-size: 13px; transition: opacity .15s;
-    }
-    .top-bar button:hover { opacity: .8; }
-    .btn-view { background: var(--blue); color: white; }
-    .btn-rule { background: #374151; color: #d1d5db; }
-    .btn-reset { background: #991b1b; color: white; }
-    .btn-adj { background: #374151; color: white; font-size: 18px; padding: 6px 14px; font-family: 'Share Tech Mono', monospace; }
-    .adj-group { display: flex; gap: 4px; align-items: center; }
-    .player-count-badge {
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 13px;
-        color: #9ca3af;
-        min-width: 24px;
-        text-align: center;
-    }
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            background: var(--ink);
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .top-bar h1 { font-size: 15px; font-weight: 900; letter-spacing: .05em; flex: 1; white-space: nowrap; }
+        .top-bar button {
+            padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer;
+            font-family: inherit; font-weight: 700; font-size: 13px; transition: opacity .15s;
+        }
+        .top-bar button:hover { opacity: .8; }
+        .btn-view { background: var(--blue); color: white; }
+        .btn-rule { background: #374151; color: #d1d5db; }
+        .btn-reset { background: #991b1b; color: white; }
+        .btn-adj { background: #374151; color: white; font-size: 18px; padding: 6px 14px; font-family: 'Share Tech Mono', monospace; }
+        .adj-group { display: flex; gap: 4px; align-items: center; }
+        .player-count-badge {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 13px;
+            color: #9ca3af;
+            min-width: 24px;
+            text-align: center;
+        }
+        /* 順位表表示中はプレイヤー増減グループを隠す */
+        .adj-group.hidden { display: none; }
 
-    /* ===== NAME SETUP ===== */
-    .name-bar {
-        background: white;
-        border-bottom: 1px solid var(--line);
-        padding: 8px 14px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        align-items: center;
-    }
-    .name-chip {
-        display: flex; align-items: center; gap: 4px;
-        background: #f3f4f6; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px;
-        transition: border-color .2s;
-    }
-    .name-chip:focus-within { border-color: var(--blue); }
-    .name-chip .num { font-size: 10px; color: #9ca3af; font-family: 'Share Tech Mono', monospace; }
-    .name-chip input {
-        border: none; background: transparent; width: 72px; font-size: 13px;
-        font-family: 'Zen Kaku Gothic New', sans-serif; font-weight: 700; color: var(--ink); outline: none;
-    }
+        /* ===== NAME SETUP ===== */
+        .name-bar {
+            background: white;
+            border-bottom: 1px solid var(--line);
+            padding: 8px 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+        .name-chip {
+            display: flex; align-items: center; gap: 4px;
+            background: #f3f4f6; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px;
+            transition: border-color .2s;
+        }
+        .name-chip:focus-within { border-color: var(--blue); }
+        .name-chip .num { font-size: 10px; color: #9ca3af; font-family: 'Share Tech Mono', monospace; }
+        .name-chip input {
+            border: none; background: transparent; width: 72px; font-size: 13px;
+            font-family: 'Zen Kaku Gothic New', sans-serif; font-weight: 700; color: var(--ink); outline: none;
+        }
+        /* プレースホルダーを薄く表示 */
+        .name-chip input::placeholder {
+            color: #d1d5db;
+            font-weight: 400;
+        }
 
-    /* ===== LEAGUE TABLE ===== */
-    .scroll-wrap {
-        overflow: auto; -webkit-overflow-scrolling: touch;
-        max-height: calc(100vh - 120px);
-    }
-    #league-table {
-        border-collapse: separate; border-spacing: 0;
-        table-layout: fixed; min-width: max-content; background: white;
-    }
-    #league-table th, #league-table td {
-        border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
-        width: var(--cell-w); text-align: center; padding: 6px 4px;
-    }
-    /* Row header */
-    #league-table tr td:first-child,
-    #league-table tr th:first-child {
-        width: var(--header-w);
-        position: sticky; left: 0;
-        background: white;
-        font-size: 11px; font-weight: 700;
-        z-index: 5;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        max-width: var(--header-w);
-        padding: 4px 6px;
-    }
-    /* Column header row */
-    #league-table thead th {
-        position: sticky; top: 0; background: var(--ink); color: white; z-index: 10;
-        font-size: 11px; font-weight: 700;
-    }
-    #league-table thead th:first-child { z-index: 12; background: var(--ink); }
+        /* ===== LEAGUE TABLE ===== */
+        .scroll-wrap {
+            overflow: auto; -webkit-overflow-scrolling: touch;
+            max-height: calc(100vh - 120px);
+        }
+        #league-table {
+            border-collapse: separate; border-spacing: 0;
+            table-layout: fixed; min-width: max-content; background: white;
+        }
+        #league-table th, #league-table td {
+            border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+            width: var(--cell-w); text-align: center; padding: 6px 4px;
+        }
+        /* Row header */
+        #league-table tr td:first-child,
+        #league-table tr th:first-child {
+            width: var(--header-w);
+            position: sticky; left: 0;
+            background: white;
+            font-size: 11px; font-weight: 700;
+            z-index: 5;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: var(--header-w);
+            padding: 4px 6px;
+        }
+        /* Column header row */
+        #league-table thead th {
+            position: sticky; top: 0; background: var(--ink); color: white; z-index: 10;
+            font-size: 11px; font-weight: 700;
+        }
+        #league-table thead th:first-child { z-index: 12; background: var(--ink); }
 
-    .diagonal {
-        background: repeating-linear-gradient(
-            -45deg, #e5e7eb, #e5e7eb 2px, #f3f4f6 2px, #f3f4f6 8px
-        );
-    }
+        .diagonal {
+            background: repeating-linear-gradient(
+                -45deg, #e5e7eb, #e5e7eb 2px, #f3f4f6 2px, #f3f4f6 8px
+            );
+        }
 
-    /* ===== MATCH CELL ===== */
-    .match-cell { display: flex; flex-direction: column; gap: 3px; padding: 2px; }
+        /* ===== MATCH CELL ===== */
+        .match-cell { display: flex; flex-direction: column; gap: 3px; padding: 2px; }
 
-    /* game score summary */
-    .game-summary {
-        display: flex; align-items: center; justify-content: center; gap: 6px;
-        padding: 2px 4px; border-radius: 4px; font-family: 'Share Tech Mono', monospace;
-    }
-    .gs-num {
-        font-size: 22px; font-weight: 900; line-height: 1; min-width: 18px;
-    }
-    .gs-sep { color: var(--line); font-size: 18px; }
-    .gs-win  { color: var(--blue); }
-    .gs-lose { color: var(--soft); }
-    .gs-lead { color: var(--red); }
+        /* game score summary */
+        .game-summary {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 2px 4px; border-radius: 4px; font-family: 'Share Tech Mono', monospace;
+        }
+        .gs-num {
+            font-size: 22px; font-weight: 900; line-height: 1; min-width: 18px;
+        }
+        .gs-sep { color: var(--line); font-size: 18px; }
+        .gs-win  { color: var(--blue); }
+        .gs-lose { color: var(--soft); }
+        .gs-lead { color: var(--red); }
 
-    /* status badge */
-    .status-badge {
-        font-size: 9px; font-weight: 700; letter-spacing: .08em;
-        padding: 1px 5px; border-radius: 10px; align-self: center;
-    }
-    .badge-done  { background: #d1fae5; color: #065f46; }
-    .badge-prog  { background: #fef3c7; color: #92400e; }
-    .badge-empty { background: #f3f4f6; color: #9ca3af; }
+        /* status badge */
+        .status-badge {
+            font-size: 9px; font-weight: 700; letter-spacing: .08em;
+            padding: 1px 5px; border-radius: 10px; align-self: center;
+        }
+        .badge-done  { background: #d1fae5; color: #065f46; }
+        .badge-prog  { background: #fef3c7; color: #92400e; }
+        .badge-empty { background: #f3f4f6; color: #9ca3af; }
 
-    /* game rows */
-    .game-rows { display: flex; flex-direction: column; gap: 1px; }
-    .game-row {
-        display: flex; align-items: center; gap: 2px; justify-content: center;
-        opacity: 1; transition: opacity .2s;
-    }
-    .game-row.hidden-row { display: none; }
-    .game-row input {
-        width: var(--input-w); height: 22px; text-align: center;
-        font-size: 13px; font-family: 'Share Tech Mono', monospace;
-        border: 1px solid var(--line); border-radius: 4px;
-        background: white; color: var(--ink);
-        transition: border-color .15s;
-    }
-    .game-row input:focus { border-color: var(--blue); outline: none; }
-    .game-row input.winner { background: #eff6ff; font-weight: 700; }
-    .game-row input.loser  { background: #fafafa; color: #9ca3af; }
-    .game-sep { color: #d1d5db; font-size: 12px; }
-    .game-label {
-        font-size: 9px; color: #9ca3af; font-family: 'Share Tech Mono', monospace; min-width: 12px;
-    }
-    /* show "add game" button */
-    .add-game-btn {
-        font-size: 10px; color: var(--blue); background: none; border: 1px dashed #bfdbfe;
-        border-radius: 4px; cursor: pointer; padding: 1px 8px; margin-top: 1px;
-        font-family: inherit; transition: background .15s;
-        display: none;
-    }
-    .add-game-btn:hover { background: #eff6ff; }
-    .add-game-btn.visible { display: block; }
+        /* game rows */
+        .game-rows { display: flex; flex-direction: column; gap: 1px; }
+        .game-row {
+            display: flex; align-items: center; gap: 2px; justify-content: center;
+            opacity: 1; transition: opacity .2s;
+        }
+        .game-row.hidden-row { display: none; }
+        .game-row input {
+            width: var(--input-w); height: 22px; text-align: center;
+            font-size: 13px; font-family: 'Share Tech Mono', monospace;
+            border: 1px solid var(--line); border-radius: 4px;
+            background: white; color: var(--ink);
+            transition: border-color .15s;
+        }
+        .game-row input:focus { border-color: var(--blue); outline: none; }
+        .game-row input.winner { background: #eff6ff; font-weight: 700; }
+        .game-row input.loser  { background: #fafafa; color: #9ca3af; }
+        .game-sep { color: #d1d5db; font-size: 12px; }
+        .game-label {
+            font-size: 9px; color: #9ca3af; font-family: 'Share Tech Mono', monospace; min-width: 12px;
+        }
+        /* show "add game" button */
+        .add-game-btn {
+            font-size: 10px; color: var(--blue); background: none; border: 1px dashed #bfdbfe;
+            border-radius: 4px; cursor: pointer; padding: 1px 8px; margin-top: 1px;
+            font-family: inherit; transition: background .15s;
+            display: none;
+        }
+        .add-game-btn:hover { background: #eff6ff; }
+        .add-game-btn.visible { display: block; }
 
-    /* 勝ちセルのみハイライト */
-    .cell-won { background: #f0fdf4; }
+        /* 勝ちセルのみハイライト */
+        .cell-won { background: #f0fdf4; }
 
-    /* スコアエラー */
-    .game-row.error-row input { border-color: #e03535 !important; background: #fff1f2 !important; color: #e03535 !important; }
-    .score-error-msg { font-size: 9px; color: #e03535; font-weight: 700; text-align: center; margin-top: 1px; }
+        /* スコアエラー */
+        .game-row.error-row input { border-color: #e03535 !important; background: #fff1f2 !important; color: #e03535 !important; }
+        .score-error-msg { font-size: 9px; color: #e03535; font-weight: 700; text-align: center; margin-top: 1px; }
 
-    /* ===== RANKING ===== */
-    #ranking-view { padding: 16px; }
-    #ranking-view h2 {
-        font-size: 16px; font-weight: 900; margin-bottom: 12px;
-        border-left: 4px solid var(--blue); padding-left: 10px;
-    }
-    #ranking-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
-    #ranking-table thead th { background: var(--ink); color: white; padding: 10px 12px; font-size: 12px; text-align: center; }
-    #ranking-table td { border-bottom: 1px solid var(--line); padding: 10px 12px; font-size: 14px; text-align: center; }
-    #ranking-table tr:last-child td { border-bottom: none; }
-    .rank-1 td { background: #fffbeb; }
-    .rank-num { font-family: 'Share Tech Mono', monospace; font-weight: 900; font-size: 16px; }
-    .rank-name { text-align: left !important; font-weight: 700; }
-    .positive { color: var(--blue); }
-    .negative { color: var(--red); }
+        /* ===== RANKING ===== */
+        #ranking-view { padding: 16px; }
+        #ranking-view h2 {
+            font-size: 16px; font-weight: 900; margin-bottom: 12px;
+            border-left: 4px solid var(--blue); padding-left: 10px;
+        }
+        #ranking-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        #ranking-table thead th { background: var(--ink); color: white; padding: 10px 12px; font-size: 12px; text-align: center; }
+        #ranking-table td { border-bottom: 1px solid var(--line); padding: 10px 12px; font-size: 14px; text-align: center; }
+        #ranking-table tr:last-child td { border-bottom: none; }
+        .rank-1 td { background: #fffbeb; }
+        .rank-num { font-family: 'Share Tech Mono', monospace; font-weight: 900; font-size: 16px; }
+        .rank-name { text-align: left !important; font-weight: 700; }
+        .positive { color: var(--blue); }
+        .negative { color: var(--red); }
 
-    .hidden { display: none; }
+        .hidden { display: none; }
 
-    /* ===== MODAL ===== */
-    .modal-bg {
-        position: fixed; inset: 0; background: rgba(0,0,0,.6);
-        display: none; justify-content: center; align-items: center; z-index: 999;
-    }
-    .modal-bg.open { display: flex; }
-    .modal-box {
-        background: white; padding: 24px; border-radius: 14px;
-        width: 88%; max-width: 360px; box-shadow: 0 20px 40px rgba(0,0,0,.3);
-    }
-    .modal-box h3 { font-size: 16px; font-weight: 900; margin-bottom: 12px; }
-    .modal-box p { font-size: 13px; line-height: 1.8; color: #374151; }
-    .modal-close {
-        margin-top: 18px; width: 100%; padding: 11px;
-        background: var(--blue); color: white; border: none;
-        border-radius: 8px; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
-    }
+        /* ===== MODAL ===== */
+        .modal-bg {
+            position: fixed; inset: 0; background: rgba(0,0,0,.6);
+            display: none; justify-content: center; align-items: center; z-index: 999;
+        }
+        .modal-bg.open { display: flex; }
+        .modal-box {
+            background: white; padding: 24px; border-radius: 14px;
+            width: 88%; max-width: 360px; box-shadow: 0 20px 40px rgba(0,0,0,.3);
+        }
+        .modal-box h3 { font-size: 16px; font-weight: 900; margin-bottom: 12px; }
+        .modal-box p { font-size: 13px; line-height: 1.8; color: #374151; }
+        .modal-close {
+            margin-top: 18px; width: 100%; padding: 11px;
+            background: var(--blue); color: white; border: none;
+            border-radius: 8px; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer;
+        }
 
-    /* progress bar */
-    .progress-bar-wrap { background: var(--line); height: 3px; }
-    .progress-bar { height: 3px; background: var(--blue); transition: width .4s; }
-</style>
-```
-
+        /* progress bar */
+        .progress-bar-wrap { background: var(--line); height: 3px; }
+        .progress-bar { height: 3px; background: var(--blue); transition: width .4s; }
+    </style>
 </head>
 <body>
 
 <!-- TOP BAR -->
-
 <div class="top-bar">
     <h1>🏓 卓球部内戦</h1>
     <button class="btn-view" onclick="toggleView()">表示切替</button>
     <button class="btn-rule" onclick="showModal()">ルール</button>
     <button class="btn-reset" onclick="resetAll()">リセット</button>
-    <div class="adj-group">
+    <div class="adj-group" id="adj-group">
         <button class="btn-adj" onclick="adjustPlayers(-1)">－</button>
         <span class="player-count-badge" id="pc-badge">3人</span>
         <button class="btn-adj" onclick="adjustPlayers(1)">＋</button>
@@ -247,15 +250,12 @@
 </div>
 
 <!-- 進捗バー -->
-
 <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
 
 <!-- 名前バー -->
-
 <div class="name-bar" id="name-bar"></div>
 
 <!-- リーグ表 -->
-
 <div id="league-view">
     <div class="scroll-wrap">
         <table id="league-table"></table>
@@ -263,7 +263,6 @@
 </div>
 
 <!-- 順位表 -->
-
 <div id="ranking-view" class="hidden">
     <h2>順位表</h2>
     <table id="ranking-table">
@@ -273,7 +272,6 @@
 </div>
 
 <!-- ルールモーダル -->
-
 <div id="rule-modal" class="modal-bg" onclick="closeModal()">
     <div class="modal-box" onclick="event.stopPropagation()">
         <h3>🏓 ルール</h3>
@@ -291,17 +289,14 @@
 </div>
 
 <script>
-    const BEST_OF = 5; // 最大ゲーム数（3先取）
+    const BEST_OF = 5;
     const WIN_GAMES = 3;
 
     let playerCount = 3;
-    let players = ["名前1", "名前2", "名前3"];
-    // scores[i][j].games = [{p1, p2}, ...]
-    // visibleGames[i][j] = 現在表示中のゲーム数
+    let players = ["", "", ""];
     let scores = {};
     let visibleGames = {};
 
-    // ====== データ初期化 ======
     function initScores() {
         scores = {};
         visibleGames = {};
@@ -314,7 +309,6 @@
         }
     }
 
-    // ====== 保存・読込 ======
     function saveData() {
         localStorage.setItem('tt_league_v2', JSON.stringify({ playerCount, players, scores, visibleGames }));
     }
@@ -330,36 +324,31 @@
     function resetAll() {
         if (!confirm("すべてのスコアと名前をリセットしますか？")) return;
         localStorage.removeItem('tt_league_v2');
-        playerCount = 3; players = ["名前1", "名前2", "名前3"];
+        playerCount = 3;
+        players = ["", "", ""];
         initScores(); renderAll();
     }
 
-    // ====== プレイヤー増減 ======
     function adjustPlayers(n) {
         if (n > 0 && playerCount < 12) {
             playerCount++;
-            if (!players[playerCount - 1]) players.push(`名前${playerCount}`);
+            if (players[playerCount - 1] === undefined) players.push("");
         } else if (n < 0 && playerCount > 2) {
             playerCount--;
         }
         renderAll(); saveData();
     }
 
-    // ====== スコア更新（両方向同期 + 不整合防止）======
     function updateScore(r, c, gameIdx, field, val) {
         const v = val === "" ? "" : parseInt(val);
-        if (val !== "" && (isNaN(v) || v < 0)) return; // 不正値無視
+        if (val !== "" && (isNaN(v) || v < 0)) return;
 
-        // 行方向(r→c)に書く
         scores[r][c].games[gameIdx][field] = v;
-        // 列方向(c→r)に鏡像を同期
         const mirror = field === 'p1' ? 'p2' : 'p1';
         scores[c][r].games[gameIdx][mirror] = v;
 
-        // 試合終了チェック：3先取したら余分なゲームを自動クリア
         const res = calculateMatch(scores[r][c].games);
         if (res.g1 >= WIN_GAMES || res.g2 >= WIN_GAMES) {
-            // 決着後のゲームをクリア（不要入力防止）
             let needed = res.g1 + res.g2;
             for (let k = needed; k < BEST_OF; k++) {
                 scores[r][c].games[k] = { p1: "", p2: "" };
@@ -368,7 +357,6 @@
             visibleGames[r][c] = needed;
             visibleGames[c][r] = needed;
         } else {
-            // 入力があれば次のゲームを自動表示
             const filledGames = scores[r][c].games.filter(g => g.p1 !== "" || g.p2 !== "").length;
             const curVis = visibleGames[r][c];
             if (filledGames >= curVis && curVis < BEST_OF) {
@@ -380,7 +368,6 @@
         renderLeague(); saveData();
     }
 
-    // ====== マッチ結果計算 ======
     function calculateMatch(games) {
         let g1 = 0, g2 = 0, p1T = 0, p2T = 0;
         games.forEach(g => {
@@ -392,12 +379,10 @@
         return { g1, g2, p1T, p2T };
     }
 
-    // ====== 入力済みゲーム数チェック ======
     function countFilledGames(games) {
         return games.filter(g => g.p1 !== "" || g.p2 !== "").length;
     }
 
-    // ====== 進捗バー ======
     function updateProgress() {
         const total = playerCount * (playerCount - 1) / 2;
         let done = 0;
@@ -411,12 +396,16 @@
         document.getElementById('progress-bar').style.width = pct + '%';
     }
 
-    // ====== 名前バー ======
+    // 表示用の名前（空なら番号で代替）
+    function displayName(i) {
+        return players[i] && players[i].trim() !== "" ? players[i] : `選手${i + 1}`;
+    }
+
     function renderNameBar() {
-        document.getElementById('name-bar').innerHTML = players.slice(0, playerCount).map((name, i) => `
+        document.getElementById('name-bar').innerHTML = Array.from({ length: playerCount }, (_, i) => `
             <div class="name-chip">
                 <span class="num">${i + 1}</span>
-                <input type="text" value="${escHtml(name)}" oninput="updatePlayerName(${i}, this.value)">
+                <input type="text" value="${escHtml(players[i] || '')}" placeholder="名前${i + 1}" oninput="updatePlayerName(${i}, this.value)">
             </div>
         `).join('');
         document.getElementById('pc-badge').textContent = playerCount + '人';
@@ -427,20 +416,18 @@
         renderLeague(); saveData();
     }
 
-    // ====== リーグ表 ======
     function renderLeague() {
         const table = document.getElementById('league-table');
 
-        // ヘッダー行
         let html = '<thead><tr><th></th>';
         for (let i = 0; i < playerCount; i++) {
-            html += `<th>${escHtml(players[i])}</th>`;
+            html += `<th>${escHtml(displayName(i))}</th>`;
         }
         html += '</tr></thead><tbody>';
 
         for (let i = 0; i < playerCount; i++) {
             html += `<tr>`;
-            html += `<td style="font-weight:700;font-size:11px">${escHtml(players[i])}</td>`;
+            html += `<td style="font-weight:700;font-size:11px">${escHtml(displayName(i))}</td>`;
             for (let j = 0; j < playerCount; j++) {
                 if (i === j) {
                     html += '<td class="diagonal"></td>';
@@ -454,12 +441,10 @@
                 const matchDone = res.g1 >= WIN_GAMES || res.g2 >= WIN_GAMES;
                 const matchStarted = filled > 0;
 
-                // バッジ
                 let badgeClass = 'badge-empty', badgeLabel = '未';
                 if (matchDone) { badgeClass = 'badge-done'; badgeLabel = '済'; }
                 else if (matchStarted) { badgeClass = 'badge-prog'; badgeLabel = '中'; }
 
-                // スコア表示
                 const g1Class = res.g1 > res.g2 ? 'gs-lead' : (res.g1 < res.g2 ? 'gs-lose' : 'gs-win');
                 const g2Class = res.g2 > res.g1 ? 'gs-lead' : (res.g2 < res.g1 ? 'gs-lose' : 'gs-win');
 
@@ -514,18 +499,14 @@
         updateProgress();
     }
 
-    // ====== 卓球スコアバリデーション ======
-    // 有効なゲームスコアの条件：
-    //   通常決着: 11-0〜11-9（11点取得、差2以上）
-    //   デュース:  12-10, 13-11, 14-12 … (両者10以上、差ちょうど2)
     function isValidGameScore(p1, p2) {
-        if (p1 === "" || p2 === "") return true; // 未入力はエラーなし
+        if (p1 === "" || p2 === "") return true;
         const a = +p1, b = +p2;
         const mx = Math.max(a, b), mn = Math.min(a, b);
-        if (mx < 11) return true;           // まだ決着なし→エラーなし
-        if (Math.abs(a - b) < 2) return false; // 2点差未満
-        if (mn < 10 && mx !== 11) return false; // 通常決着なのに11超（12-8等）
-        if (mn >= 10 && Math.abs(a - b) !== 2) return false; // デュースは差ちょうど2
+        if (mx < 11) return true;
+        if (Math.abs(a - b) < 2) return false;
+        if (mn < 10 && mx !== 11) return false;
+        if (mn >= 10 && Math.abs(a - b) !== 2) return false;
         return true;
     }
     function addGame(i, j) {
@@ -536,10 +517,9 @@
         }
     }
 
-    // ====== 順位表 ======
     function renderRanking() {
-        let stats = players.slice(0, playerCount).map((name, i) => {
-            let s = { id: i, name, winPoints: 0, gDiff: 0, pDiff: 0, defeated: [], matchCount: 0 };
+        let stats = Array.from({ length: playerCount }, (_, i) => {
+            let s = { id: i, name: displayName(i), winPoints: 0, gDiff: 0, pDiff: 0, defeated: [], matchCount: 0 };
             for (let j = 0; j < playerCount; j++) {
                 if (i === j) continue;
                 const m = calculateMatch(scores[i][j].games);
@@ -563,8 +543,6 @@
             if (b.gDiff !== a.gDiff) return b.gDiff - a.gDiff;
             return b.pDiff - a.pDiff;
         });
-        // 同率順位を計算（同じ勝ち点・G差・P差なら同じ順位）
-        let rankNum = 1;
         stats.forEach((s, idx) => {
             if (idx === 0) { s.rank = 1; }
             else {
@@ -577,7 +555,7 @@
             }
         });
 
-        document.getElementById('ranking-body').innerHTML = stats.map((s, idx) => {
+        document.getElementById('ranking-body').innerHTML = stats.map((s) => {
             const gd = s.gDiff > 0 ? `<span class="positive">+${s.gDiff}</span>` : (s.gDiff < 0 ? `<span class="negative">${s.gDiff}</span>` : s.gDiff);
             const pd = s.pDiff > 0 ? `<span class="positive">+${s.pDiff}</span>` : (s.pDiff < 0 ? `<span class="negative">${s.pDiff}</span>` : s.pDiff);
             return `<tr class="${s.rank === 1 ? 'rank-1' : ''}">
@@ -591,34 +569,39 @@
         }).join('');
     }
 
-    // ====== 表示切替 ======
     function toggleView() {
         const lv = document.getElementById('league-view');
         const rv = document.getElementById('ranking-view');
         const nb = document.getElementById('name-bar');
+        const adj = document.getElementById('adj-group');
         if (lv.classList.contains('hidden')) {
-            lv.classList.remove('hidden'); nb.classList.remove('hidden');
+            // リーグ表に戻る
+            lv.classList.remove('hidden');
+            nb.classList.remove('hidden');
             rv.classList.add('hidden');
+            adj.classList.remove('hidden'); // ±ボタン表示
         } else {
-            lv.classList.add('hidden'); nb.classList.add('hidden');
+            // 順位表へ
+            lv.classList.add('hidden');
+            nb.classList.add('hidden');
             rv.classList.remove('hidden');
+            adj.classList.add('hidden'); // ±ボタン非表示
             renderRanking();
         }
     }
 
-    // ====== モーダル ======
     function showModal() { document.getElementById('rule-modal').classList.add('open'); }
     function closeModal() { document.getElementById('rule-modal').classList.remove('open'); }
 
-    // ====== ユーティリティ ======
     function escHtml(s) {
         return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function renderAll() { renderNameBar(); renderLeague(); }
 
-    // ====== 初期起動 ======
     if (!loadData()) initScores();
+    // 既存データの名前が「名前N」形式なら空文字に変換（移行対応）
+    players = players.map((p, i) => (p === `名前${i+1}` ? "" : p));
     renderAll();
 </script>
 
